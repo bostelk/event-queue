@@ -7,7 +7,7 @@
 #include "producer.h"
 
 /*
-	Creates n producers threads while the main thread polls for events.
+        Creates n producers threads while the main thread polls for events.
 */
 
 int
@@ -126,30 +126,29 @@ main()
     }
   }
 
-  uint32_t sum_produced_count = 0;
-  // An estimate of the maximum number of produced events.
-  uint32_t sum_produced_max_count = 0;
-  double sum_elapsed_sec = 0;
-  for (int n = 0; n < producer_count; n++) {
-    sum_produced_count += producer_params[n].produced_count;
-    sum_elapsed_sec += producer_params[n].elapsed_sec;
-    sum_produced_max_count +=
-      (producer_params[n].elapsed_sec * 1000) / producer_params->period_ms;
-  }
+  producer_metrics_t* metrics =
+    (producer_metrics_t*)malloc(producer_count * sizeof(*metrics));
+  calc_metrics(producer_params, producer_ids, metrics, producer_count);
+  print_metrics(metrics, producer_count);
 
   // The average number of events per-second.
-  double events_per_sec = sum_produced_count / sum_elapsed_sec;
-  // An esimtate of the max events per-second.
-  double events_per_sec_max = sum_produced_max_count / sum_elapsed_sec;
+  double sum_events_per_sec = 0;
+  // An estimate of the max events per-second.
+  double sum_events_per_sec_max = 0;
+  for (int n = 0; n < producer_count; n++) {
+    sum_events_per_sec += metrics[n].events_per_sec;
+    sum_events_per_sec_max += metrics[n].events_per_sec_max;
+  }
 
-  printf("%f events/second (%.2f%% of max).",
-         events_per_sec,
-         100 * events_per_sec / events_per_sec_max);
+  printf("sum: %f events/second (%.2f%% of max).",
+         sum_events_per_sec,
+         100 * sum_events_per_sec / sum_events_per_sec_max);
 
   free(buffer);
   free(producer_params);
   free(producer_handles);
   free(producer_ids);
+  free(metrics);
 
   return 0;
 }

@@ -6,10 +6,14 @@ A lock-free event queue. Not for production use (experimenting) and for Windows 
 Example output:
 ```
 ...
-01/21/2019 22:58:31.435 (10372): random event occured.
-01/21/2019 22:58:31.435 (11916): random event occured.
-01/21/2019 22:58:31.437 (10372): random event occured.
-01/21/2019 22:58:31.437 (11916): random event occured.
-01/21/2019 22:58:31.437 (4952): random event occured.
-500.124332 events/second (50.01% of max).
+01/22/2019 00:15:01.11 (12428): random event occured.
+01/22/2019 00:15:01.11 (8340): random event occured.
+01/22/2019 00:15:01.11 (6628): random event occured.
+01/22/2019 00:15:01.13 (8340): random event occured.
+01/22/2019 00:15:01.13 (12428): random event occured.
+thread (12428): 500.959787 events/second (50.10% of max).
+thread (6628): 501.140260 events/second (50.11% of max).
+thread (8340): 500.984413 events/second (50.10% of max).
+thread (10756): 501.025414 events/second (50.10% of max).
+sum: 2004.109875 events/second (50.10% of max).
 ```

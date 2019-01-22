@@ -29,7 +29,26 @@ struct producer_params_t
   double elapsed_sec;
 };
 
+struct producer_metrics_t
+{
+  // The thread id.
+  uint32_t thread_id;
+  // The average number of events per-second.
+  double events_per_sec;
+  // An estimate of the max events per-second.
+  double events_per_sec_max;
+};
+
 thread_t
 create_producer_thread(producer_params_t* params);
 
 unsigned long __stdcall producer_do_work(void* void_params);
+
+void
+calc_metrics(producer_params_t* params,
+             uint32_t* thread_ids,
+             producer_metrics_t* metrics,
+             int producer_count);
+
+void
+print_metrics(producer_metrics_t* metrics, int producer_count);

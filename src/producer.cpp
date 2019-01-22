@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <assert.h>
 #include <time.h>
+#include <stdio.h>
 #include "producer.h"
 #include "event.h"
 
@@ -42,4 +43,31 @@ unsigned long __stdcall producer_do_work(void* void_params)
   params->elapsed_sec = ((double)(clock() - start)) / CLOCKS_PER_SEC;
 
   return 0;
+}
+
+void
+calc_metrics(producer_params_t* params,
+             uint32_t* thread_ids,
+             producer_metrics_t* metrics,
+             int producer_count)
+{
+  for (int n = 0; n < producer_count; n++) {
+    metrics[n].thread_id = thread_ids[n];
+    metrics[n].events_per_sec =
+      params[n].produced_count / params[n].elapsed_sec;
+    metrics[n].events_per_sec_max =
+      (params[n].elapsed_sec * 1000) / params[n].period_ms;
+    metrics[n].events_per_sec_max /= params[n].elapsed_sec;
+  }
+}
+
+void
+print_metrics(producer_metrics_t* metrics, int producer_count)
+{
+  for (int n = 0; n < producer_count; n++) {
+    printf("thread (%u): %f events/second (%.2f%% of max).\n",
+           metrics[n].thread_id,
+           metrics[n].events_per_sec,
+           100 * metrics[n].events_per_sec / metrics[n].events_per_sec_max);
+  }
 }
